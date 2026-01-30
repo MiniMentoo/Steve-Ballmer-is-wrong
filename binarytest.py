@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-NUM_OF_TRIALS = 10000000
+NUM_OF_TRIALS = 100000
 UPPERBOUND = 100
 LOWERBOUND = 1
 
@@ -27,19 +27,24 @@ class NumberGame:
         self.number = random.randint(LOWERBOUND,UPPERBOUND)
 
 class BinarySearcher:
-    def __init__(self):
+    def __init__(self, initialGuess = None):
         self.guessCount = 0
         self.env = NumberGame()
         self.upper = UPPERBOUND
         self.lower = LOWERBOUND
         self.previousGuessResult = None
+        if initialGuess == None:
+            self.guess = self.setGuess()
+            self.initialguess = None
+        else:
+            self.guess = initialGuess
+            self.initialguess = initialGuess
     
     def setGuess(self):
         return (self.upper - self.lower) // 2 + self.lower
 
     def playGame(self):
         while(not self.previousGuessResult == result.CORRECT):
-            self.guess = self.setGuess()
             self.previousGuessResult = self.env.guess(self.guess)
             #print(f"Guessed {self.guess}, got {self.previousGuessResult}")
             self.guessCount += 1
@@ -52,6 +57,7 @@ class BinarySearcher:
                     return self.guessCount
                 case _:
                     raise Exception("Environment guess method returned something unexpected")
+            self.guess = self.setGuess()
     
     def reset(self):
         self.env.reset()
@@ -59,6 +65,10 @@ class BinarySearcher:
         self.upper = UPPERBOUND
         self.lower = LOWERBOUND
         self.previousGuessResult = None
+        if self.initialguess == None:
+            self.guess = self.setGuess()
+        else:
+            self.guess = self.initialguess
 
 if __name__ == "__main__":
     sum = 0
